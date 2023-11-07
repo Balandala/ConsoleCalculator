@@ -16,21 +16,18 @@ static public class Programm
                 break;
             else
             {
-                input += " ";
-                //Console.WriteLine(string.Join(' ', ReturnOpPrioTupleList(input)));
-                //Console.WriteLine(string.Join(' ', ReturnNumbersList(input)));
+                input += ")";
                 Console.WriteLine(string.Join(' ', ToRpn(input)));
                 Console.ForegroundColor = ConsoleColor.Green;
-                //Console.WriteLine(CalculateInput(input));
                 Console.WriteLine();
                 Console.ForegroundColor = ConsoleColor.White;
             }
         }
     }
 
-    static List<object> MakeTokenList(string input)
+    static List<string> MakeTokenList(string input)
     {
-        var tokenList = new List<object>();
+        List<string> tokenList = new List<string>();
         string buff = "";
         foreach (char element in input)
         {
@@ -38,8 +35,9 @@ static public class Programm
                 buff += element;
             else
             {
-                tokenList.Add((buff));
-                tokenList.Add(element);
+                if (buff != "")
+                    tokenList.Add((buff));
+                tokenList.Add(element+"");
                 buff = "";
             }
         }
@@ -48,105 +46,39 @@ static public class Programm
 
     static List<object> ToRpn(string input)
     {
-        var tokenList = MakeTokenList(input);
+        List<string> tokenList = MakeTokenList(input);
         Stack<string> stack = new Stack<string>();
-        var rpnExpresssion = new List<object>();
-        var availbleOperators = new List<string>() {"(", "*", "/", "+", "-", ")"};
+        List<object> rpnExpresssion = new List<object>();
         foreach (object element in tokenList)
-        {
-            if (double.TryParse(element.ToString(), out double result))
+        { 
+            if (double.TryParse((string)element, out double result))
             {
-                rpnExpresssion.Add(result);
+                rpnExpresssion.Add(element);
             }
-            if (availbleOperators.Contains(element.ToString()))
+            else if ((stack.Count > 0) && GetPriority(stack.Peek()) > GetPriority((string)element) && stack.Peek() != "(")
             {
-                stack.Push(element.ToString());
-                if (element.Equals(")") || element.Equals(" "))
+                if ((string)element != ")")
                 {
-                    while (stack.Peek() != "(" && stack.Count != 0)
+                    rpnExpresssion.Add(stack.Pop());
+                    stack.Push((string)element);
+                }
+                else
+                {
+                    while (stack.Count > 0 && stack.Peek() != "(")
+                    {
                         rpnExpresssion.Add(stack.Pop());
-                    stack.Pop();
+                    }
+                    if (stack.Count > 0)
+                        stack.Pop();
                 }
             }
-          
+            else
+            {
+                stack.Push((string)element);
+            }
         }
         return rpnExpresssion;
     }
-
-    //static List<(char, int)> ReturnOpPrioTupleList(string input)
-    //{
-    //    var availbleOperators = new List<char>() {'*', '/', '+', '-', '^'};
-    //    var operatorsList = new List<(char, int)>();
-    //    char op;
-    //    int prio = 0;
-    //    foreach (var element in input)
-    //    {
-    //        if (availbleOperators.Contains(element))
-    //        {
-    //            op = element;
-    //            if ((element == '*') || (element == '/'))
-    //                operatorsList.Add((op, prio + 1));
-    //            else if (element == '^')
-    //                operatorsList.Add((op, prio + 2));
-    //            else
-    //            operatorsList.Add((op, prio)); 
-    //        }
-    //        else if (element == '(')
-    //            prio += 3;
-    //        else if (element == ')')
-    //            prio -= 3;
-    //    }
-    //    return operatorsList;
-    //}
-
-    //static List<double> ReturnNumbersList(string input)
-    //{
-    //    string number = "";
-    //    var numbersList = new List<double>();
-    //    int index = -1;
-    //    char previousNotDigit = ' ';
-    //    foreach (var digit in input + " ")
-    //    {
-    //        if (Char.IsDigit(digit))
-    //        {
-    //            number += digit;
-    //        }
-    //        else if (number != "")
-    //        {
-    //            if (previousNotDigit == '.' || previousNotDigit == ',')
-    //                numbersList[index] += Math.Round(double.Parse(number) * Math.Pow(0.1, number.Length), number.Length);
-    //            else
-    //            {
-    //                numbersList.Add(double.Parse((number)));
-    //                index++;
-    //            }
-    //            number = "";
-    //            previousNotDigit = digit;      
-    //        }
-    //        else continue; 
-    //    }
-    //    return numbersList;
-    //}
-
-    //static double CalculateInput(string input)
-    //{
-    //    var operators = ReturnOpPrioTupleList(input);
-    //    var numbers = ReturnNumbersList(input);
-    //    if (input[0] == '-')
-    //    {
-    //        numbers[0] *= -1;
-    //        operators.RemoveAt(0);
-    //    }
-    //    while (numbers.Count > 1)
-    //    {
-    //        int maxPrio = operators.Max(t => t.Item2);
-    //        int index = operators.FindIndex(t => t.Item2 == maxPrio);
-    //        numbers[index] = Calculate(operators[index].Item1, numbers[index], numbers[index + 1]); ;
-    //        numbers.RemoveAt(index + 1);
-    //        operators.RemoveAt(index);
-    //    }
-    //    return numbers[0];
-    //}
 
     static double Calculate(string op, double num1, double num2)
     {
@@ -158,6 +90,20 @@ static public class Programm
             case '/': return num1 / num2;
             case '^': return Math.Pow(num1, num2);
             default: throw new Exception("Wrong symbol for operator");
+        }
+    }
+    static int GetPriority(string op)
+    {
+        switch (char.Parse(op))
+        {
+            case '+': return 0;
+            case '-': return 0;
+            case '*': return 1;
+            case '/': return 1;
+            case '(': return 1;
+            case ')': return -1;
+            default: return -1;
+
         }
     }
 }
