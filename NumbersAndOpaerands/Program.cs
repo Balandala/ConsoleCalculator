@@ -2,6 +2,7 @@
 using System.Security.AccessControl;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks.Dataflow;
+using System.Xml.Linq;
 
 namespace Programm;
 
@@ -19,8 +20,9 @@ static public class Programm
                 input += ")";
                 Console.WriteLine(string.Join(' ', ToRpn(input)));
                 Console.ForegroundColor = ConsoleColor.Green;
-                Console.WriteLine();
+                Console.WriteLine(CalculateRpn(input).ToString());
                 Console.ForegroundColor = ConsoleColor.White;
+                Console.WriteLine();
             }
         }
     }
@@ -50,12 +52,12 @@ static public class Programm
         Stack<string> stack = new Stack<string>();
         List<object> rpnExpresssion = new List<object>();
         foreach (object element in tokenList)
-        { 
+        {
             if (double.TryParse((string)element, out double result))
             {
                 rpnExpresssion.Add(element);
             }
-            else if ((stack.Count > 0) && GetPriority(stack.Peek()) > GetPriority((string)element) && stack.Peek() != "(")
+            else if ((stack.Count > 0) && GetPriority(stack.Peek()) >= GetPriority((string)element) && stack.Peek() != "(" && (string)element != "(")
             {
                 if ((string)element != ")")
                 {
@@ -80,9 +82,28 @@ static public class Programm
         return rpnExpresssion;
     }
 
-    static double Calculate(string op, double num1, double num2)
+    static double CalculateRpn(string input)
     {
-        switch (char.Parse(op))
+        List<object> rpn = ToRpn(input);
+        for (int i = 0; i < rpn.Count;)
+        {
+            if (!double.TryParse(Convert.ToString(rpn[i]), out double result))
+            {
+                rpn[i] = Calculate(Convert.ToChar(rpn[i]), Convert.ToDouble(rpn[i - 2]), Convert.ToDouble(rpn[i - 1]));
+                for (int j = 0; j < 2; j++)
+                {
+                    rpn.Remove(rpn[i - 1]);
+                    i--;
+                }
+            }
+            else i++;
+        }
+        return (double)rpn[0];
+    } 
+
+    static double Calculate(char op, double num1, double num2)
+    {
+        switch (op)
         {
             case '+': return num1 + num2;
             case '-': return num1 - num2;
@@ -100,7 +121,8 @@ static public class Programm
             case '-': return 0;
             case '*': return 1;
             case '/': return 1;
-            case '(': return 1;
+            case '^': return 2;
+            case '(': return 3;
             case ')': return -1;
             default: return -1;
 
