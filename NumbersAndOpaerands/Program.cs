@@ -6,6 +6,48 @@ using System.Xml.Linq;
 
 namespace Programm;
 
+class Token : Object
+{
+}
+class Number : Token
+{
+   public double Value;
+    public Number(double value)
+    {
+        Value = value;
+    }
+}
+class Operation : Token
+{
+    public char Op;
+    public int Prio;
+    public Operation(char op)
+    {
+        Op = op;
+        switch(op)
+        {
+            case '+': Prio = 0; break;
+            case '-': Prio = 0; break;
+            case '*': Prio = 1; break;
+            case '/': Prio = 1; break;
+            case '^': Prio = 2; break;
+            default: throw new ArgumentException("Wrong simbol for operator");
+        }
+    }
+}
+class Parenthesis : Token
+{
+    public bool IsOpened;
+    public Parenthesis(char bracket)
+    {
+        switch(bracket)
+        {
+            case '(': IsOpened = true; break;
+            case ')': IsOpened = false; break;
+        }
+    }
+}
+
 static public class Programm
 {
     static void Main(string[] args)
@@ -18,78 +60,97 @@ static public class Programm
             else
             {
                 input += ")";
-                Console.WriteLine(string.Join(' ', ToRpn(input)));
                 Console.ForegroundColor = ConsoleColor.Green;
-                Console.WriteLine(CalculateRpn(input).ToString());
+                Console.WriteLine(CalculateRpn(ToRpn(input)));
                 Console.ForegroundColor = ConsoleColor.White;
                 Console.WriteLine();
             }
         }
     }
 
-    static List<string> MakeTokenList(string input)
+    static List<Token> MakeTokenList(string input)
     {
-        List<string> tokenList = new List<string>();
+        List<Token> tokenList = new List<Token>();
         string buff = "";
         foreach (char element in input)
         {
             if (Char.IsDigit(element) || element == ',')
+            {
                 buff += element;
+            }
             else
             {
                 if (buff != "")
-                    tokenList.Add((buff));
-                tokenList.Add(element+"");
+                    tokenList.Add(new Number(double.Parse(buff)));
+                if (element == '(' || element == ')')
+                    tokenList.Add(new Parenthesis(element));
+                else
+                    tokenList.Add(new Operation(element));
                 buff = "";
             }
         }
         return tokenList;
     }
 
-    static List<object> ToRpn(string input)
+    static List<Token> ToRpn(string input)
     {
-        List<string> tokenList = MakeTokenList(input);
-        Stack<string> stack = new Stack<string>();
-        List<object> rpnExpresssion = new List<object>();
-        foreach (object element in tokenList)
+        List<Token> tokenList = MakeTokenList(input);
+        Stack<Token> stack = new Stack<Token>();
+        List<Token> output = new List<Token>();
+        foreach (Token element in tokenList)
         {
-            if (double.TryParse((string)element, out double result))
+            if (element is Number)
             {
-                rpnExpresssion.Add(element);
+                output.Add(element);
             }
-            else if ((stack.Count > 0) && GetPriority(stack.Peek()) >= GetPriority((string)element) && stack.Peek() != "(" && (string)element != "(")
+            else if (element is Operation)
             {
-                if ((string)element != ")")
+                Operation opElement = (Operation)element;
+                while (stack.Count > 0 && stack.Peek() is Operation)
                 {
-                    rpnExpresssion.Add(stack.Pop());
-                    stack.Push((string)element);
+                    Operation opStack = (Operation)stack.Peek();
+                    if (opStack.Prio >= opElement.Prio)
+                    {
+                        output.Add(stack.Pop());
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+                stack.Push(element);
+            }
+            else if (element is Parenthesis)
+            {
+                Parenthesis bracket = (Parenthesis)element;
+                if (bracket.IsOpened)
+                {
+                    stack.Push(bracket);
                 }
                 else
                 {
-                    while (stack.Count > 0 && stack.Peek() != "(")
+                    while (stack.Count > 0 && !(stack.Peek() is Parenthesis))
                     {
-                        rpnExpresssion.Add(stack.Pop());
+                        output.Add(stack.Pop());
                     }
                     if (stack.Count > 0)
                         stack.Pop();
                 }
             }
-            else
-            {
-                stack.Push((string)element);
-            }
-        }
-        return rpnExpresssion;
-    }
 
-    static double CalculateRpn(string input)
+        }
+        return output;
+    }
+    static double CalculateRpn(List<Token> rpn)
     {
-        List<object> rpn = ToRpn(input);
         for (int i = 0; i < rpn.Count;)
         {
-            if (!double.TryParse(Convert.ToString(rpn[i]), out double result))
+            if (rpn[i] is Operation)
             {
-                rpn[i] = Calculate(Convert.ToChar(rpn[i]), Convert.ToDouble(rpn[i - 2]), Convert.ToDouble(rpn[i - 1]));
+                Number n1 = (Number)rpn[i - 2];
+                Number n2 = (Number)rpn[i - 1];
+                Operation op = (Operation)rpn[i];
+                rpn[i] = new Number(Calculate(op.Op, n1.Value, n2.Value));
                 for (int j = 0; j < 2; j++)
                 {
                     rpn.Remove(rpn[i - 1]);
@@ -98,9 +159,9 @@ static public class Programm
             }
             else i++;
         }
-        return (double)rpn[0];
-    } 
-
+        Number ans = (Number)rpn[0];
+        return ans.Value;
+    }
     static double Calculate(char op, double num1, double num2)
     {
         switch (op)
@@ -111,21 +172,6 @@ static public class Programm
             case '/': return num1 / num2;
             case '^': return Math.Pow(num1, num2);
             default: throw new Exception("Wrong symbol for operator");
-        }
-    }
-    static int GetPriority(string op)
-    {
-        switch (char.Parse(op))
-        {
-            case '+': return 0;
-            case '-': return 0;
-            case '*': return 1;
-            case '/': return 1;
-            case '^': return 2;
-            case '(': return 3;
-            case ')': return -1;
-            default: return -1;
-
         }
     }
 }
