@@ -11,7 +11,7 @@ class Token : Object
 }
 class Number : Token
 {
-   public double Value;
+    public double Value;
     public Number(double value)
     {
         Value = value;
@@ -24,7 +24,7 @@ class Operation : Token
     public Operation(char op)
     {
         Op = op;
-        switch(op)
+        switch (op)
         {
             case '+': Prio = 0; break;
             case '-': Prio = 0; break;
@@ -40,7 +40,7 @@ class Parenthesis : Token
     public bool IsOpened;
     public Parenthesis(char bracket)
     {
-        switch(bracket)
+        switch (bracket)
         {
             case '(': IsOpened = true; break;
             case ')': IsOpened = false; break;
