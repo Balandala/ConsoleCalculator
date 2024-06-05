@@ -1,0 +1,18 @@
+﻿<Window x:Class="Rpn.Wpf.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Rpn.Wpf"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="358" Width="679">
+    <Viewbox>
+        <Grid>
+            <TextBox x:Name="tbInput" Height="30" HorizontalAlignment="Left" Width="300" Margin="196,54,0,189"  />
+            <Button x:Name="btnCalculate"  Width="100" Height="30"  Content="Вычислить!" Click="btnCalcualate_Click" RenderTransformOrigin="-2.762,-1.68" Margin="99,137,342,106" />
+            <Label x:Name="lbOutput" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="196,88,0,0" Content=""/>
+            <Label Content="Введите выражение:" Height="30" Margin="42,34,324,170"/>
+            <Label Content="Результат:" Height="30" HorizontalAlignment="Left" Margin="99,88,0,155"/>
+        </Grid>
+    </Viewbox>
+</Window>
