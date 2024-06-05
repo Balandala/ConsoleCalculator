@@ -29,20 +29,21 @@ namespace Rpn.Wpf
         }
         void btnCalcualate_Click(object sender, RoutedEventArgs e)
         {
-            RpnCalculator calculator = new RpnCalculator();
-            if (int.TryParse(tbVariable.Text, out int result))
-            {
-                calculator.SetVariable(result);
-                lbOutput.Content = calculator.Calculate(tbExpression.Text);
-            }
-            else if (!tbExpression.Text.Contains("x"))
-            {
-                lbOutput.Content = calculator.Calculate(tbExpression.Text);
-            }
-            else
-            {
-                lbOutput.Content = "Переменная указана некорректно";
-            }
+            
+        }
+        void cGraphic_MouseMove(object sender, MouseEventArgs e)
+        {
+            Point point = Mouse.GetPosition(cGraphic);
+            lbUICords.Content = point;
+
+        }
+        void DrawGraph()
+        {
+            CanvasDrawer = new CanvasDrawer(cGraphic,
+                _fStart = double.,
+                tbEnd,
+                tb
+                )
         }
     }
 }
