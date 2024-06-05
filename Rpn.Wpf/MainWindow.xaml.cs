@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.DirectoryServices;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -28,8 +29,20 @@ namespace Rpn.Wpf
         }
         void btnCalcualate_Click(object sender, RoutedEventArgs e)
         {
-                RpnCalculator calculator = new RpnCalculator();
-                lbOutput.Content = calculator.Calculate(tbInput.Text);
+            RpnCalculator calculator = new RpnCalculator();
+            if (int.TryParse(tbVariable.Text, out int result))
+            {
+                calculator.SetVariable(result);
+                lbOutput.Content = calculator.Calculate(tbExpression.Text);
+            }
+            else if (!tbExpression.Text.Contains("x"))
+            {
+                lbOutput.Content = calculator.Calculate(tbExpression.Text);
+            }
+            else
+            {
+                lbOutput.Content = "Переменная указана некорректно";
+            }
         }
     }
 }

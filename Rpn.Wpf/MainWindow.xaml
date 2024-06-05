@@ -8,11 +8,13 @@
         Title="MainWindow" Height="358" Width="679">
     <Viewbox>
         <Grid>
-            <TextBox x:Name="tbInput" Height="30" HorizontalAlignment="Left" Width="300" Margin="196,54,0,189"  />
-            <Button x:Name="btnCalculate"  Width="100" Height="30"  Content="Вычислить!" Click="btnCalcualate_Click" RenderTransformOrigin="-2.762,-1.68" Margin="99,137,342,106" />
-            <Label x:Name="lbOutput" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="196,88,0,0" Content=""/>
-            <Label Content="Введите выражение:" Height="30" Margin="42,34,324,170"/>
-            <Label Content="Результат:" Height="30" HorizontalAlignment="Left" Margin="99,88,0,155"/>
+            <TextBox x:Name="tbExpression" Height="30" HorizontalAlignment="Left" Width="300" Margin="196,36,0,207"  />
+            <TextBox x:Name="tbVariable" Height="30" HorizontalAlignment="Center" Width="150" Margin="0,88,0,155"  />
+            <Button x:Name="btnCalculate"  Width="100" Height="30"  Content="Вычислить!" Click="btnCalcualate_Click" RenderTransformOrigin="-2.762,-1.68" Margin="196,190,245,53" />
+            <Label x:Name="lbOutput" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="196,138,0,0" Content=""/>
+            <Label Content="Введите выражение:" Height="30" Margin="44,36,350,207"/>
+            <Label Content="Результат:" Height="30" HorizontalAlignment="Left" Margin="99,136,0,107"/>
+            <Label Content="Значение переменной:" Height="30" Margin="44,88,345,155"/>
         </Grid>
     </Viewbox>
 </Window>
