@@ -6,20 +6,17 @@ using System.Threading.Tasks;
 
 namespace Rpn.Logic
 {
-    internal class Tg
+    internal class Tg : Operation
     {
-        internal class Cos : Operation
-        {
-            public override string Name => "tg";
-            public override int Prio => 1;
-            public override int ArgumentsNumber => 1;
-            public override bool IsFunction => false;
+        public override string Name => "tg";
+        public override int Prio => 1;
+        public override int ArgumentsNumber => 1;
+        public override bool IsFunction => false;
 
-            public override Number Execute(params Number[] numbers)
-            {
-                var num = numbers[0];
-                return new Number(Math.Tan(num.Value));
-            }
+        public override Number Execute(params Number[] numbers)
+        {
+            var num = numbers[0];
+            return new Number(Math.Tan(num.Value));
         }
     }
 }
