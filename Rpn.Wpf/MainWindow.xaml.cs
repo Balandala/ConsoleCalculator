@@ -51,12 +51,11 @@ namespace Rpn.Wpf
         void RefreshGraph()
         {
             cGraphic.Children.Clear();
-            Canvas canvas = cGraphic;
             double start = double.Parse(tbStart.Text);
             double end = double.Parse(tbEnd.Text);
             double step = double.Parse(tbStep.Text);
             double scale = double.Parse(tbScale.Text);
-            CanvasDrawer drawer = new(canvas, start, end, step, scale);
+            CanvasDrawer drawer = new(cGraphic, start, end, step, scale);
             drawer.DrawAxis();
 
             List<Point> points = new List<Point>();
@@ -68,7 +67,7 @@ namespace Rpn.Wpf
                 {
                     Point point = new Point(x, y);
                     Point pointInUi = CoordinatesConverter.ToUiCords(point, cGraphic, scale);
-                    if (pointInUi.X > 0 && pointInUi.Y > 0 && pointInUi.X < canvas.ActualWidth && pointInUi.Y < canvas.ActualHeight)
+                    if (CoordinatesConverter.IsUiPointInsideCanvas(pointInUi, cGraphic))
                         points.Add(point);
                 }
             }

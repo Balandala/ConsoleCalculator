@@ -24,6 +24,10 @@ namespace Rpn.Wpf
         {
             return new Point((canvas.ActualWidth / 2 + Mathcords.X * scale), (-Mathcords.Y * scale + canvas.ActualHeight / 2));
         }
+        public static bool IsUiPointInsideCanvas(Point point, Canvas canvas) 
+        {
+            return (point.X > 0 && point.Y > 0 && point.X < canvas.ActualWidth && point.Y < canvas.ActualHeight);
+        }
     }
     public class CanvasDrawer
     {
@@ -70,15 +74,19 @@ namespace Rpn.Wpf
                 Point bottom = new Point(i, -scaleHeight);
                 top = CoordinatesConverter.ToUiCords(top, _canvas, _scale);
                 bottom = CoordinatesConverter.ToUiCords(bottom, _canvas, _scale);
-                Line line = new Line
+                if (CoordinatesConverter.IsUiPointInsideCanvas(top, _canvas))
                 {
-                    X1 = bottom.X,
-                    Y1 = bottom.Y,
-                    X2 = top.X,
-                    Y2 = top.Y,
-                };
-                line.Stroke = _brush;
-                _canvas.Children.Add(line);
+                    Line line = new Line
+                    {
+                        X1 = bottom.X,
+                        Y1 = bottom.Y,
+                        X2 = top.X,
+                        Y2 = top.Y,
+                    };
+                    line.Stroke = _brush;
+                    _canvas.Children.Add(line);
+                }
+                else continue;
             }
         }
         public void DrawGraph(List<Point> points)
