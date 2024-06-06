@@ -8,7 +8,7 @@ namespace Rpn.Logic
 {
     internal class SqRoot : Operation
     {
-        public override string Name => "cos";
+        public override string Name => "sqrt";
         public override int Prio => 2;
         public override int ArgumentsNumber => 1;
         public override bool IsFunction => false;
