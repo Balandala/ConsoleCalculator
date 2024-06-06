@@ -22,7 +22,7 @@ public class RpnCalculator
     {
         List<Operation> availableOpetations = new List<Operation>
         {
-            new Plus(), new Minus(), new Multiply(), new Division(), new Root()
+            new Plus(), new Minus(), new Multiply(), new Division(), new Root(), new Cos(), new Sin(), new Ctg(), new SqRoot(), new Power(), new Log(), new Tg()
         };
         List<Token> tokenList = new List<Token>();
         bool isBuildingOperation;
