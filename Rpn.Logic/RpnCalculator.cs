@@ -138,7 +138,7 @@ public class RpnCalculator
                         args[j] = (Number)rpn[i - j-1];
                     }
                     rpn[i] = op.Execute(args);
-                    for (int j = 0; j < 2; j++)
+                    for (int k = 0; k < op.ArgumentsNumber; k++)
                     {
                         rpn.Remove(rpn[i - 1]);
                         i--;
