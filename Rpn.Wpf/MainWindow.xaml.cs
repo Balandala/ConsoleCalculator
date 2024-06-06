@@ -27,6 +27,16 @@ namespace Rpn.Wpf
         {
             InitializeComponent();
         }
+        public double TextBoxParse(TextBox tb)
+        {
+            if (double.TryParse(tb.Text, out double result))
+                return result;
+            else
+            {
+                tb.Text = "Неверная запись";
+                return 0;
+            }
+        } 
         void btnCalcualate_Click(object sender, RoutedEventArgs e)
         {
             RefreshGraph();
@@ -51,10 +61,15 @@ namespace Rpn.Wpf
         void RefreshGraph()
         {
             cGraphic.Children.Clear();
-            double start = double.Parse(tbStart.Text);
-            double end = double.Parse(tbEnd.Text);
-            double step = double.Parse(tbStep.Text);
-            double scale = double.Parse(tbScale.Text);
+            double scale = TextBoxParse(tbScale);
+            double start = CoordinatesConverter.ToMathCords(new Point(0, 0), cGraphic, scale).X;
+            double end = CoordinatesConverter.ToMathCords(new Point(cGraphic.ActualWidth, 0), cGraphic, scale).X;
+            double step = TextBoxParse(tbStep);
+            if (!(Math.Round(step, 3) > 0))
+            {
+                tbStep.Text = "Неверно указан шаг";
+                step = 1;
+            }
             CanvasDrawer drawer = new(cGraphic, start, end, step, scale);
             drawer.DrawAxis();
 
