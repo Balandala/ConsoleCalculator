@@ -14,15 +14,15 @@ using System.Windows.Shapes;
 
 namespace Rpn.Wpf
 {
-    public class  CoordinatesConverter
+    public class CoordinatesConverter
     {
-        public static Point ToMathCords(Point UIcords, Canvas canvas, double scale)   
+        public static Point ToMathCords(Point UIcords, Canvas canvas, double scale)
         {
             return new Point((UIcords.X - canvas.ActualWidth / 2) / scale, (canvas.ActualHeight / 2 - UIcords.Y) / scale);
         }
         public static Point ToUiCords(Point Mathcords, Canvas canvas, double scale)
         {
-            return new Point((canvas.ActualWidth / 2 + Mathcords.X * scale),(- Mathcords.Y * scale + canvas.ActualHeight / 2));
+            return new Point((canvas.ActualWidth / 2 + Mathcords.X * scale), (-Mathcords.Y * scale + canvas.ActualHeight / 2));
         }
     }
     public class CanvasDrawer
@@ -33,7 +33,7 @@ namespace Rpn.Wpf
         private double _fStart;
 
         private Canvas _canvas;
-        private Brush _brush = Brushes .Black;
+        private Brush _brush = Brushes.Black;
         public CanvasDrawer(Canvas canvas, double fStart, double fEnd, double step, double scale)
         {
             _canvas = canvas;
@@ -42,22 +42,22 @@ namespace Rpn.Wpf
             _step = step;
             _scale = scale;
         }
-             public void DrawAxis()
-            {
-                Line xAxis = new Line();
-                xAxis.X1 = 0;
-                xAxis.X2 = _canvas.ActualWidth;
-                xAxis.Y1 = xAxis.Y2 = _canvas.ActualHeight / 2;
-                xAxis.Stroke = _brush;
+        public void DrawAxis()
+        {
+            Line xAxis = new Line();
+            xAxis.X1 = 0;
+            xAxis.X2 = _canvas.ActualWidth;
+            xAxis.Y1 = xAxis.Y2 = _canvas.ActualHeight / 2;
+            xAxis.Stroke = _brush;
 
-                Line yAxis = new Line();
-                yAxis.X1 = yAxis.X2 = _canvas.ActualWidth / 2;
-                yAxis.Y1 = _canvas.ActualHeight;
-                yAxis.Y2 = 0;
-                yAxis.Stroke = _brush;
+            Line yAxis = new Line();
+            yAxis.X1 = yAxis.X2 = _canvas.ActualWidth / 2;
+            yAxis.Y1 = _canvas.ActualHeight;
+            yAxis.Y2 = 0;
+            yAxis.Stroke = _brush;
 
-                _canvas.Children.Add(xAxis);
-                _canvas.Children.Add(yAxis);
+            _canvas.Children.Add(xAxis);
+            _canvas.Children.Add(yAxis);
 
             DrawScale();
         }
@@ -68,7 +68,7 @@ namespace Rpn.Wpf
                 double scaleHeight = 0.5;
                 Point top = new Point(i, scaleHeight);
                 Point bottom = new Point(i, -scaleHeight);
-                top =  CoordinatesConverter.ToUiCords(top, _canvas, _scale);
+                top = CoordinatesConverter.ToUiCords(top, _canvas, _scale);
                 bottom = CoordinatesConverter.ToUiCords(bottom, _canvas, _scale);
                 Line line = new Line
                 {
@@ -81,5 +81,25 @@ namespace Rpn.Wpf
                 _canvas.Children.Add(line);
             }
         }
+        public void DrawGraph(List<Point> points)
+        {
+            for (int i = 0; i < points.Count - 1; i++)
+            {
+                Point point1 = CoordinatesConverter.ToUiCords(points[i], _canvas, _scale);
+                Point point2 = CoordinatesConverter.ToUiCords(points[i + 1], _canvas, _scale);
+                Line graphPieace = new Line
+                {
+                    X1 = point1.X,
+                    Y1 = point1.Y,
+                    X2 = point2.X,
+                    Y2 = point2.Y,
+                };
+                if (point2.X < _canvas.ActualWidth && point2.Y < _canvas.ActualHeight)
+                {
+                    graphPieace.Stroke = Brushes.Red;
+                    _canvas.Children.Add(graphPieace);
+                }
+            }
+        }
     }
-    }
+}

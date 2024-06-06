@@ -1,19 +1,22 @@
 ﻿using Rpn.Logic;
 using System.Reflection.Metadata.Ecma335;
+using System.Xml;
 
 namespace Rpn.Logic;
 public class RpnCalculator
 {
+    string Expression;
     Variable variable = new Variable(0);
-    public void SetVariable(double value)
+    public double Calculate(double value)
     {
-        variable.SetValue(value);
-    }
-    public double Calculate(string expression)
-    {
-        expression = expression.Replace(" ", "").Replace('.', ',').ToLower() + ")";
-        double output = CalculateRpn(ToRpn(expression));
+        var rpn = ToRpn(Expression);
+        variable.Value = value;
+        double output = CalculateRpn(rpn);
         return output;
+    }
+    public RpnCalculator(string expression)
+    {
+        Expression = expression.Replace(" ", "").Replace('.', ',').ToLower() + ")";
     }
     private List<Token> MakeTokenList(string input)
     {

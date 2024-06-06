@@ -29,18 +29,26 @@ namespace Rpn.Wpf
         }
         void btnCalcualate_Click(object sender, RoutedEventArgs e)
         {
-            DrawGraph();
+            RefreshGraph();
         }
         void cGraphic_MouseMove(object sender, MouseEventArgs e)
         {
-            double scale = double.Parse(tbScale.Text);
+            double scale;
+            if (double.TryParse(tbScale.Text, out double result))
+                scale = result;
+            else
+                scale = 1.0;
             Point point = Mouse.GetPosition(cGraphic);
-            Point math = CoordinatesConverter.ToMathCords(point, cGraphic, scale);
-            lbMathCords.Content = math;
-            lbUICords.Content = CoordinatesConverter.ToUiCords(math, cGraphic, scale);
+            point = CoordinatesConverter.ToMathCords(point, cGraphic, scale);
+            Point mathCords = new (Math.Round(point.X, 2),Math.Round(point.Y, 2));
+            lbMathCords.Content = mathCords;
 
         }
-        void DrawGraph()
+        void cWhenLoaded(object sender, RoutedEventArgs e)
+        {
+            RefreshGraph();
+        }
+        void RefreshGraph()
         {
             cGraphic.Children.Clear();
             Canvas canvas = cGraphic;
@@ -50,6 +58,15 @@ namespace Rpn.Wpf
             double scale = double.Parse(tbScale.Text);
             CanvasDrawer drawer = new(canvas, start, end, step, scale);
             drawer.DrawAxis();
+
+            List<Point> points = new List<Point>();
+            RpnCalculator calculator = new RpnCalculator(tbExpression.Text);
+            for (double x = start; x < end; x += step)
+            {
+               double y = calculator.Calculate(x);
+               points.Add(new Point(x, y));
+            }
+            drawer.DrawGraph(points);
         }
     }
 }
