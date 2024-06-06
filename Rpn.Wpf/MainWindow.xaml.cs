@@ -64,9 +64,12 @@ namespace Rpn.Wpf
             for (double x = start; x < end; x += step)
             {
                double y = calculator.Calculate(x);
-                if (!(double.IsInfinity(x) || double.IsInfinity(y)))
+                if (!(double.IsInfinity(y) || double.IsNaN(y)))
                 {
-                    points.Add(new Point(x, y));
+                    Point point = new Point(x, y);
+                    Point pointInUi = CoordinatesConverter.ToUiCords(point, cGraphic, scale);
+                    if (pointInUi.X > 0 && pointInUi.Y > 0 && pointInUi.X < canvas.ActualWidth && pointInUi.Y < canvas.ActualHeight)
+                        points.Add(point);
                 }
             }
             drawer.DrawGraph(points);
