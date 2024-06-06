@@ -16,34 +16,60 @@ public class RpnCalculator
     }
     public RpnCalculator(string expression)
     {
-        Expression = expression.Replace(" ", "").Replace('.', ',').ToLower() + ")";
+        Expression = expression.Replace(" ", "").ToLower() + ")";
     }
     private List<Token> MakeTokenList(string input)
     {
+        List<Operation> availableOpetations = new List<Operation>
+        {
+            new Plus(), new Minus(), new Multiply(), new Division(), new Root()
+        };
         List<Token> tokenList = new List<Token>();
-        string buff = "";
+        bool isBuildingOperation;
+        string numBuff = "";
+        string opBuff = "";
         foreach (char element in input)
         {
-            if (Char.IsDigit(element) || element == ',')
+            isBuildingOperation = false;
+            if (Char.IsDigit(element) || element == '.')
             {
-                buff += element;
+                numBuff += element;
             }
             else
             {
-                if (buff != "")
-                    tokenList.Add(new Number(double.Parse(buff)));
+                if (numBuff != "")
+                {
+                    tokenList.Add(new Number(double.Parse(numBuff.Replace(".", ","))));
+                    numBuff = "";
+                }
                 if (element == '(' || element == ')')
                     tokenList.Add(new Parenthesis(element));
-                else if (element == 'x' || element == 'y')
+                else if (element == 'x')
                     tokenList.Add(variable);
+                else if (element == ',')
+                    continue;
                 else
-                    tokenList.Add(new Operation(element));
-                buff = "";
+                {
+                    opBuff += element;
+                    isBuildingOperation = true;
+                }
+            }
+            if (!isBuildingOperation && opBuff != "")
+            {
+                tokenList.Add(CreateOperation(opBuff, availableOpetations));
+                opBuff = "";
             }
         }
-        if (buff != "")
-        tokenList.Add(new Number(double.Parse(buff)));
         return tokenList;
+    }
+    private Operation CreateOperation(string buffer, List<Operation> operations)
+    {
+        foreach (Operation operation in operations)
+        {
+            if (operation.Name == buffer)
+                return operation;
+        }
+        throw new Exception("Operation is not found");
     }
     private List<Token> ToRpn(string input)
     {
@@ -105,10 +131,13 @@ public class RpnCalculator
             {
                 if (rpn[i] is Operation)
                 {
-                    Number n1 = (Number)rpn[i - 2];
-                    Number n2 = (Number)rpn[i - 1];
                     Operation op = (Operation)rpn[i];
-                    rpn[i] = new Number(Calculate(op.Op, n1.Value, n2.Value));
+                    var args = new Number[op.ArgumentsNumber];
+                    for (int j = 0; j < op.ArgumentsNumber; j++)
+                    {
+                        args[j] = (Number)rpn[i - j-1];
+                    }
+                    rpn[i] = op.Execute(args);
                     for (int j = 0; j < 2; j++)
                     {
                         rpn.Remove(rpn[i - 1]);
@@ -121,17 +150,5 @@ public class RpnCalculator
             return ans.Value;
         }
         else return 0;
-    }
-    private double Calculate(char op, double num1, double num2)
-    {
-        switch (op)
-        {
-            case '+': return num1 + num2;
-            case '-': return num1 - num2;
-            case '*': return num1 * num2;
-            case '/': return num1 / num2;
-            case '^': return Math.Pow(num1, num2);
-            default: throw new Exception("Wrong symbol for operator");
-        }
     }
 }  

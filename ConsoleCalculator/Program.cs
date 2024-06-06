@@ -10,9 +10,9 @@ static public class Programm
         Console.Write("Введите выражение: ");
         string input = Console.ReadLine();
         Console.Write("\nВведите значение переменной: ");
-        RpnCalculator calculator = new RpnCalculator();
-        calculator.SetVariable(double.Parse(Console.ReadLine()));
-        Console.WriteLine("Результат: " + calculator.Calculate(input));
+        RpnCalculator calculator = new RpnCalculator(input);
+        var ans = calculator.Calculate(double.Parse(Console.ReadLine()));
+        Console.WriteLine("Результат: {0}", ans);  
         Console.ReadLine();
     }
 }

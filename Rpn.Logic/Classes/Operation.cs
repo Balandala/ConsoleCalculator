@@ -6,22 +6,12 @@ using System.Threading.Tasks;
 
 namespace Rpn.Logic
 {
-    class Operation : Token
+    abstract class Operation : Token
     {
-        public char Op;
-        public int Prio;
-        public Operation(char op)
-        {
-            Op = op;
-            switch (op)
-            {
-                case '+': Prio = 0; break;
-                case '-': Prio = 0; break;
-                case '*': Prio = 1; break;
-                case '/': Prio = 1; break;
-                case '^': Prio = 2; break;
-                default: throw new ArgumentException("Invalid simbol");
-            }
-        }
+        public abstract string Name { get; }
+        public abstract int Prio { get; }
+        public abstract int ArgumentsNumber { get; }
+        public abstract bool IsFunction { get; }
+        public abstract Number Execute(params Number[] numbers);
     }
 }
