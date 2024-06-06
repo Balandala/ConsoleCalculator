@@ -2,10 +2,11 @@
 using System;
 using System.Collections.Generic;
 using System.DirectoryServices.ActiveDirectory;
-using System.Drawing;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Ink;
 using System.Windows.Media;
@@ -13,47 +14,72 @@ using System.Windows.Shapes;
 
 namespace Rpn.Wpf
 {
-    class CoordinatesConverter
+    public class  CoordinatesConverter
     {
-        Point ConvertToMathCords(Point UIcords, Canvas canvas, double _scale)
+        public static Point ToMathCords(Point UIcords, Canvas canvas, double scale)   
         {
-            return new Point(UIcords.X + (int)(canvas.ActualWidth/2/_scale), UIcords.Y + (int)(canvas.ActualHeight/2/_scale));
+            return new Point((UIcords.X - canvas.ActualWidth / 2) / scale, (canvas.ActualHeight / 2 - UIcords.Y) / scale);
+        }
+        public static Point ToUiCords(Point Mathcords, Canvas canvas, double scale)
+        {
+            return new Point((canvas.ActualWidth / 2 + Mathcords.X * scale),(- Mathcords.Y * scale + canvas.ActualHeight / 2));
         }
     }
-    class CanvasDrawer
+    public class CanvasDrawer
     {
         private double _scale;
         private double _step;
         private double _fEnd;
         private double _fStart;
+
         private Canvas _canvas;
         private Brush _brush = Brushes .Black;
-        CanvasDrawer(Canvas _canvas,double _fStart, double _fEnd, double _Step, double _scale) { }
-        public void DrawAxis()
+        public CanvasDrawer(Canvas canvas, double fStart, double fEnd, double step, double scale)
         {
-            Line xAxis = new Line();
-            xAxis.X1 = 0;
-            xAxis.X2 = _canvas.ActualWidth;
-            xAxis.Y1 = xAxis.Y2 = _canvas.ActualHeight / 2;
-            xAxis.Stroke = _brush;
-            
-            Line yAxis = new Line();
-            yAxis.X1 = yAxis.X2 = _canvas.ActualWidth / 2;
-            yAxis.Y1 = _canvas.ActualHeight;
-            yAxis.Y2 = 0;
-            yAxis.Stroke = _brush;
+            _canvas = canvas;
+            _fStart = fStart;
+            _fEnd = fEnd;
+            _step = step;
+            _scale = scale;
+        }
+             public void DrawAxis()
+            {
+                Line xAxis = new Line();
+                xAxis.X1 = 0;
+                xAxis.X2 = _canvas.ActualWidth;
+                xAxis.Y1 = xAxis.Y2 = _canvas.ActualHeight / 2;
+                xAxis.Stroke = _brush;
 
-            _canvas.Children.Add(xAxis);
-            _canvas.Children.Add(yAxis);
+                Line yAxis = new Line();
+                yAxis.X1 = yAxis.X2 = _canvas.ActualWidth / 2;
+                yAxis.Y1 = _canvas.ActualHeight;
+                yAxis.Y2 = 0;
+                yAxis.Stroke = _brush;
+
+                _canvas.Children.Add(xAxis);
+                _canvas.Children.Add(yAxis);
 
             DrawScale();
-        }        
-        private void DrawScale()
+        }
+        void DrawScale()
         {
-            for (double i = _fStart; i < _fEnd;  i += _step) 
+            for (double i = _fStart; i < _fEnd; i += _step)
             {
-
+                double scaleHeight = 0.5;
+                Point top = new Point(i, scaleHeight);
+                Point bottom = new Point(i, -scaleHeight);
+                top =  CoordinatesConverter.ToUiCords(top, _canvas, _scale);
+                bottom = CoordinatesConverter.ToUiCords(bottom, _canvas, _scale);
+                Line line = new Line
+                {
+                    X1 = bottom.X,
+                    Y1 = bottom.Y,
+                    X2 = top.X,
+                    Y2 = top.Y,
+                };
+                line.Stroke = _brush;
+                _canvas.Children.Add(line);
             }
         }
     }
-}
+    }
