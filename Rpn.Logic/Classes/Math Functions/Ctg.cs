@@ -8,7 +8,7 @@ namespace Rpn.Logic
 {
     internal class Ctg : Operation
     {
-        public override string Name => "cos";
+        public override string Name => "ctg";
         public override int Prio => 1;
         public override int ArgumentsNumber => 1;
         public override bool IsFunction => false;

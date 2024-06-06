@@ -64,7 +64,10 @@ namespace Rpn.Wpf
             for (double x = start; x < end; x += step)
             {
                double y = calculator.Calculate(x);
-               points.Add(new Point(x, y));
+                if (!(double.IsInfinity(x) || double.IsInfinity(y)))
+                {
+                    points.Add(new Point(x, y));
+                }
             }
             drawer.DrawGraph(points);
         }
