@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.DirectoryServices;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -62,8 +63,8 @@ namespace Rpn.Wpf
         {
             cGraphic.Children.Clear();
             double scale = TextBoxParse(tbScale);
-            double start = CoordinatesConverter.ToMathCords(new Point(0, 0), cGraphic, scale).X;
-            double end = CoordinatesConverter.ToMathCords(new Point(cGraphic.ActualWidth, 0), cGraphic, scale).X;
+            double start = CoordinatesConverter.ToMathCords(new Point(0, 0), cGraphic, scale).X; // Sets the start point at the left border of canvas 
+            double end = CoordinatesConverter.ToMathCords(new Point(cGraphic.ActualWidth, 0), cGraphic, scale).X; //Sets the end point at the right border of canvas
             double step = TextBoxParse(tbStep);
             if (!(Math.Round(step, 3) > 0))
             {
