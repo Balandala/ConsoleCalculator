@@ -9,9 +9,8 @@ namespace Rpn.Logic
     internal class Log : Operation
     {
         public override string Name => "log";
-        public override int Prio => 1;
+        public override int Prio => 2;
         public override int ArgumentsNumber => 2;
-        public override bool IsFunction => false;
 
         public override Number Execute(params Number[] numbers)
         {

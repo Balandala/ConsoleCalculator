@@ -11,7 +11,6 @@ namespace Rpn.Logic
         public abstract string Name { get; }
         public abstract int Prio { get; }
         public abstract int ArgumentsNumber { get; }
-        public abstract bool IsFunction { get; }
         public abstract Number Execute(params Number[] numbers);
     }
 }

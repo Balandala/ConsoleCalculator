@@ -11,8 +11,6 @@ namespace Rpn.Logic
         public override string Name => "-";
         public override int Prio => 0;
         public override int ArgumentsNumber => 2;
-        public override bool IsFunction => false;
-
         public override Number Execute(params Number[] numbers)
         {
             var num1 = numbers[0];

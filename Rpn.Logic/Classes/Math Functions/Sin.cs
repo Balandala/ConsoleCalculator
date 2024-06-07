@@ -9,10 +9,8 @@ namespace Rpn.Logic
     internal class Sin : Operation
     {
         public override string Name => "sin";
-        public override int Prio => 1;
+        public override int Prio => 2;
         public override int ArgumentsNumber => 1;
-        public override bool IsFunction => false;
-
         public override Number Execute(params Number[] numbers)
         {
             var num = numbers[0];
