@@ -81,12 +81,12 @@ public class RpnCalculator
                 {
                     Operation op = (Operation)rpn[i];
                     var args = new Number[op.ArgumentsNumber];
-                    for (int j = 0; j < op.ArgumentsNumber; j++)
+                    for (int num = 0; num < op.ArgumentsNumber; num++)
                     {
-                        args[j] = (Number)rpn[i - j-1];
+                        args[num] = (Number)rpn[i - num-1];
                     }
                     rpn[i] = op.Execute(args);
-                    for (int k = 0; k < op.ArgumentsNumber; k++)
+                    for (int num = 0; num < op.ArgumentsNumber; num++)
                     {
                         rpn.Remove(rpn[i - 1]);
                         i--;
